@@ -239,11 +239,11 @@ def setup_driver(headless_preference: Optional[bool] = None) -> webdriver.Chrome
 
 
 def login(driver: webdriver.Chrome, wait: WebDriverWait) -> None:
-    # Set custom geolocation (Mumbai, India)
-    # Latitude: 19.0760, Longitude: 72.8777, Accuracy: 100
+    # Set custom geolocation to user's location
+    # Latitude: 23.034049, Longitude: 72.504524, Accuracy: 100
     driver.execute_cdp_cmd("Emulation.setGeolocationOverride", {
-        "latitude": 19.0760,
-        "longitude": 72.8777,
+        "latitude": 23.034049,
+        "longitude": 72.504524,
         "accuracy": 100
     })
 
