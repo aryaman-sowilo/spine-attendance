@@ -176,14 +176,23 @@ def setup_driver(headless_preference: Optional[bool] = None) -> webdriver.Chrome
     chrome_options.add_argument("--use-fake-device-for-media-stream=black")
     chrome_options.add_argument("--use-fake-device-for-media-stream=black=1280x720")
 
-    # Disable location and notifications
+    # Allow location (will set custom coordinates) and other permissions
     prefs = {
-        "profile.default_content_setting_values.geolocation": 2,  # 1=allow, 2=block
+        "profile.default_content_setting_values.geolocation": 1,  # 1=allow, 2=block
         "profile.default_content_setting_values.notifications": 2,
         "profile.default_content_setting_values.media_stream_camera": 1,  # Allow fake camera
         "profile.default_content_setting_values.media_stream_mic": 1,  # Allow fake mic
     }
     chrome_options.add_experimental_option("prefs", prefs)
+
+    # Set custom location (Mumbai, India by default - adjust as needed)
+    # Latitude: 19.0760, Longitude: 72.8777 (Mumbai)
+    chrome_options.add_experimental_option("prefs", {
+        **prefs,
+        "profile.content_settings.exceptions.geolocation": {
+            "*": {"setting": 1}
+        }
+    })
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
@@ -230,6 +239,14 @@ def setup_driver(headless_preference: Optional[bool] = None) -> webdriver.Chrome
 
 
 def login(driver: webdriver.Chrome, wait: WebDriverWait) -> None:
+    # Set custom geolocation (Mumbai, India)
+    # Latitude: 19.0760, Longitude: 72.8777, Accuracy: 100
+    driver.execute_cdp_cmd("Emulation.setGeolocationOverride", {
+        "latitude": 19.0760,
+        "longitude": 72.8777,
+        "accuracy": 100
+    })
+
     driver.get(URL)
 
     username_input = wait.until(EC.presence_of_element_located(USERNAME_INPUT))
