@@ -169,10 +169,21 @@ def setup_driver(headless_preference: Optional[bool] = None) -> webdriver.Chrome
         use_headless = should_use_headless(headless_preference)
 
     chrome_options = webdriver.ChromeOptions()
+
+    # Fake camera and media permissions
     chrome_options.add_argument("--use-fake-ui-for-media-stream")
     chrome_options.add_argument("--use-fake-device-for-media-stream")
     chrome_options.add_argument("--use-fake-device-for-media-stream=black")
     chrome_options.add_argument("--use-fake-device-for-media-stream=black=1280x720")
+
+    # Disable location and notifications
+    prefs = {
+        "profile.default_content_setting_values.geolocation": 2,  # 1=allow, 2=block
+        "profile.default_content_setting_values.notifications": 2,
+        "profile.default_content_setting_values.media_stream_camera": 1,  # Allow fake camera
+        "profile.default_content_setting_values.media_stream_mic": 1,  # Allow fake mic
+    }
+    chrome_options.add_experimental_option("prefs", prefs)
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
